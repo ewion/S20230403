@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function checkDuplication() {
+            var userId = $('#user_id').val();
+            if (userId === '') {
+                alert('이메일 주소를 입력해주세요.');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/checkDuplication',
+                data: {
+                    user_id: userId
+                },
+                success: function (response) {
+                    if (response === 0) {
+                        $('#duplicationCheckResult').text('사용 가능한 이메일 주소입니다.');
+                    } else {
+                        $('#duplicationCheckResult').text('이미 사용 중인 이메일 주소입니다.');
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log('AJAX Error: ' + error);
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+<form method="post" action="/sign">
+    <div class="container">
+        <h1>회원가입</h1>
+        <div class="form-group">
+            <label for="user_id">이메일 주소</label>
+            <input type="email" class="form-control" id="user_id" name="user_id" placeholder="사용자 아이디" required="required">
+            <button type="button" class="btn btn-secondary" onclick="checkDuplication()">중복확인</button>
+            <span id="duplicationCheckResult"></span>
+        </div>
+        <div class="form-group">
+            <label for="inputName">이 름</label>
+            <input type="text" class="form-control" id="inputName" name="name" placeholder="사용자 이름" required="required">
+        </div>
+        <div class="form-group">
+            <label for="inputNickname">별 명</label>
+            <input type="text" class="form-control" id="inputNickname" name="nickname" placeholder="사용자 별명" required="required">
+        </div>
+        <div class="form-group">
+            <label for="inputPassword">비밀번호</label>
+            <input type="password" class="form-control" id="inputPassword" name="password" placeholder="사용자 비밀번호" required="required">
+        </div>
+        <div class="form-group">
+            <label for="inputPhone">전화번호</label>
+            <input type="tel" class="form-control" id="inputPhone" name="phone" placeholder="사용자 전화번호 (010-0000-0000)" required="required">
+        </div>
+        <div class="form-group">
+            <label for="selectTelecom">통신사</label>
+            <select class="form-control" id="selectTelecom" name="telecom" required="required">
+                <option value="SKT">SKT</option>
+                <option value="KT">KT</option>
+                <option value="LG">LG</option>
+                <option value="알뜰폰">알뜰폰</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selectGender">성별</label>
+            <select class="form-control" id="selectGender" name="gender" required="required">
+                <option value="male">남성</option>
+                <option value="female">여성</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selectAuth">회원 구분</label>
+            <select class="form-control" id="selectAuth" name="auth_level" required="required">
+                <option value="SELLER">SELLER</option>
+                <option value="USER" selected>USER</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="selectAgree">약관 동의
+                <input type="checkbox" id="selectAgree" name="agree" value="Y" required="required">동의
+            </label>
+        </div>
+        <button type="submit" class="btn btn-primary">가입 완료</button>
+        <input type="button" class="btn btn-primary" onclick="location.href='/'" value="회원가입 취소">
+    </div>
+</form>
+</body>
+</html>

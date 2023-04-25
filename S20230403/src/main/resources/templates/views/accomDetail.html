@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout/default_layout">
+<th:block layout:fragment="content">
+<head>
+ 	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+	<style type="text/css">
+		.carousel, .carousel-inner img {
+			width: 500px;
+			height: 400px;
+			margin-top: 5px;
+			
+		}		
+		
+		.section {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 30px;
+		}
+		
+		.section .aside {
+			margin-left: 3%;
+		}
+		
+		/* .accomRoomList {
+			display: flex;
+			justify-content: center;
+			margin-right: 5%;
+		} */
+		
+		#dateRange {
+			width: 230px;
+			padding-left: 30px;
+			cursor: default;
+			border: none;
+    		outline: none;
+		}
+		
+		.calendar{
+			position: relative;
+		}
+		
+		.calendar-icon{
+			position: absolute;
+			left: 5px;
+			top: 2px;
+		}
+		
+		.section-line{
+			width: 100px;
+			height: 1px;
+			background-color: gray;
+		}
+		
+		.flatpickr-day.selected{
+			background-color: rgb(0, 183, 247);
+		}
+		
+		#submitDateBtn{
+			width: 307.875px;
+			height: 38px;
+			border: none;
+			border-radius: 0px 0px 8px 8px;
+			color: rgba(0, 183, 247, 0.8);
+		}
+		
+		.accordion{
+			margin: auto;
+			justify-content: center;
+			width: 75%;
+		}
+		
+		.accordion-button{
+			display: inline-block;
+			font-size: 14px;
+			width: 110px;
+			text-align: center;
+		}
+		
+		.accordion-line{
+			width: 100%;
+			height: 1px;
+			background: #EAEAEA;
+		}
+		
+		
+		.roomListImg img{
+			width: 280px;
+			height: 220px;
+			margin: 10px;
+		}
+		
+		.roomListName {
+		}
+		
+		.roomListPrice {
+		}
+		
+		.roomList {
+			display: block;
+			width: 100%;
+			border: 1px solid darkgrey;
+			margin-bottom: 2%;
+			position: relative;
+		}
+		
+		.roomList h2{
+			position: absolute;
+			top: 4%;
+			right: 2%;
+			width: 62%;
+		}
+		
+		.roomList p{
+			position: absolute;
+			top: 46%;
+			right: 2%;
+			width: 62%;
+			font-weight: bold;
+		}
+		
+		.roomList String{
+			margin-right: 50px;
+		}
+		
+		.roomListReserveBtn{
+			position: absolute;
+			height: 13%;
+			top: 82.8%;
+			right: 2%;
+			width: 62%;
+			color: white;
+			border: none;
+			background-color: rgb(0, 183, 247);
+			border-radius: 3px;
+		}
+		
+		.accomBasicInfo ul{
+			list-style: none;
+			margin-bottom: 20px;
+		}
+		
+		.accomBasicInfo .subTitle{
+			color: rgb(0, 183, 247);
+			font-weight: bold;
+		}
+		
+		.accomReview {
+			border-bottom: 1px solid lightgray;
+			margin-bottom: 10px;
+		}
+		
+		.calculateReview {
+			border-bottom: 2px solid lightgray;
+			margin-bottom: 10px;
+		}
+		
+		.calculateReview img {
+			padding-bottom: 25px;
+		}
+		
+		.accomReviewRoomImg{
+			display: inline-block;
+			white-space:nowrap;
+			overflow:auto;
+		}
+		
+		.accomReviewRoomImg img{
+			width: 200px;
+			height: 200px;
+			padding: 0.25rem;
+		}
+		
+		.avgReview{
+			font-size: 40px;
+		}
+		
+		.accomReviewRating{
+			margin-bottom: 5px;
+		}
+		
+		.accomReviewRating img{
+			width: 20px;
+		}
+		
+		#map {
+		  height: 400px; /* The height is 400 pixels */
+		  width: 100%; /* The width is the width of the web page */
+		}
+	</style>
+</head>
+	<div class="container">
+		<!-- 메인 사진 -->
+		<div class="section">
+			<div id="carouselExampleFade" class="carousel slide carousel-fade" data-bs-ride="carousel">
+				<!-- 메인이미지 -->
+				<div class="carousel-inner">
+					<!-- roomImgStat으로 상태값 받아와서 index속성으로 0번째만 active -->
+					<div class="carousel-item active" th:if="${roomImgStat.index == 0}" th:each="roomImg, roomImgStat :  ${roomImg}">
+						<img th:src="@{/upload/{r_img}(r_img=${roomImg.r_img})}" alt="객실사진 준비중" onerror="this.onerror=null; this.src='/img/imageLoding.jpg';">
+					</div>
+					<!-- roomImgStat으로 상태값 받아와서 index속성으로 0번째 이상은 no active -->
+					<div class="carousel-item" th:if="${roomImgStat.index > 0}" th:each="roomImg, roomImgStat :  ${roomImg}">
+						<img th:src="@{/upload/{r_img}(r_img=${roomImg.r_img})}" alt="객실사진 준비중" onerror="this.onerror=null; this.src='/img/imageLoding.jpg';">
+					</div>
+				</div>
+				
+				<button class="carousel-control-prev" type="button"
+					data-bs-target="#carouselExampleFade" data-bs-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Previous</span>
+				</button>
+				<button class="carousel-control-next" type="button"
+					data-bs-target="#carouselExampleFade" data-bs-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true"></span>
+					<span class="visually-hidden">Next</span>
+				</button>
+			</div>
+			<!-- 메인 정보 및 캘린더 -->
+			<div class="aside">
+				<div class="accomBizname">
+					<h2 th:text="${accomBasicInfo.biz_name}"></h2>
+				</div>
+				<div class="accomAddr">
+					<p th:text="${accomBasicInfo.addr}"></p>
+				</div>
+				<div class="calendar">
+					<input type="text" id="dateRange" placeholder="Select Date Range" readonly>
+					<button id="submitDateBtn">선택완료</button>
+					<span class="calendar-icon">&#128197;</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="accordion" id="accordionExample">
+			<div class="accordion-header">
+				<div class="accordion-line"></div>	
+				<button class="accordion-button collapsed" data-bs-target="#collapseContent"
+					aria-expanded="true">객실예약</button>
+				<button class="accordion-button collapsed"
+					data-bs-target="#collapseContent" aria-expanded="false">기본정보</button>
+				<button class="accordion-button collapsed"
+					data-bs-target="#collapseContent" aria-expanded="false">리뷰</button>
+				<div class="accordion-line"></div>
+			</div>
+			<div class="accordion-item">
+				<div id="collapseContent" class="accordion-collapse collapse show"
+					data-bs-parent="#accordionExample">
+					<div class="accordion-body">
+							<div class="content" id="contentOne">
+								<!-- 객실 리스트 -->
+								<!-- <div class="accomRoomList"> -->
+								<div id="roomReservedList"></div>
+							</div>
+							
+							<div class="content" id="contentTwo" style="display: none;">
+								<!-- 객실 정보 -->
+								<div class="accomBasicInfo">
+									<ul>
+										<li class="subTitle">상호</li>
+										<li th:text="${accomBasicInfo.biz_name}"></li>
+									</ul>
+									<ul>
+										<li class="subTitle">숙소 소개</li>
+										<li th:text="${accomBasicInfo.description}"></li>
+									</ul>
+									<ul>
+										<li class="subTitle">편의시설</li>
+										<li th:if="${accomBasicInfo.pool != ''}" 			th:text="${accomBasicInfo.pool}"></li>
+										<li th:if="${accomBasicInfo.parking != ''}" 		th:text="${accomBasicInfo.parking}"></li>
+										<li th:if="${accomBasicInfo.cafe != ''}" 			th:text="${accomBasicInfo.cafe}"></li>
+										<li th:if="${accomBasicInfo.restaurant != ''}" 	th:text="${accomBasicInfo.restaurant}"></li>
+										<li th:if="${accomBasicInfo.store != ''}" 		th:text="${accomBasicInfo.store}"></li>
+										<li th:if="${accomBasicInfo.sauna != ''}" 		th:text="${accomBasicInfo.sauna}"></li>
+										<li th:if="${accomBasicInfo.laundry != ''}" 		th:text="${accomBasicInfo.laundry}"></li>
+										<li th:if="${accomBasicInfo.fitness != ''}" 		th:text="${accomBasicInfo.fitness }"></li>
+									</ul>
+									<ul>
+										<li class="subTitle">주소</li>
+										<li><p th:text="${accomBasicInfo.addr}"></p></li>
+										<!-- latitude, longitude th:data로 저장하고 자바스크립트에서 사용 -->
+										<li><div id="location" th:data-latitude="${accomBasicInfo.latitude}" th:data-longitude="${accomBasicInfo.longitude}"></div></li>
+										<li><div id="map"></div></li>
+									</ul>
+								</div>
+							</div>
+							
+							<div class="content" id="contentThree" style="display: none;">
+								<!-- 객실리뷰 -->
+								<div class="accomReviewList">
+									<div class="calculateReview">
+										<img th:src="@{img/star.png}">
+										<span class="avgReview" th:text="${calculateReview.avgReview}"></span>
+										<span>/5</span>
+										<p th:text="'전체리뷰 (' + ${calculateReview.totalReview} + ')'" ></p>										
+									</div>
+									<div class=accomReview th:each="accomReview : ${accomReview}">
+										<div class="accomReviewRating">
+											<span th:each="num : ${#numbers.sequence(1, accomReview.rating)}">
+												<img th:src="@{/img/star.png}">												
+											</span>
+										</div>
+										<span th:text="${accomReview.nickname} + ' 님 |'"></span> 
+										<span th:text="${#dates.format(accomReview.review_date, 'yyyy-MM-dd')}"></span>
+										
+										<div class="accomReviewRoomName">
+											<p th:text="${accomReview.r_name}+' 객실'"></p>
+										</div>
+										<div class="accomReviewRoomContent">
+											<p th:text="${accomReview.review_content}"></p>
+										</div>
+										<!-- model에 저장된 accomReview를 review로 꺼냄 -->
+										<div class="accomReviewRoomImg" th:each="review : ${accomReview}">
+											<!-- review 객체에 review테이블과 review_img테이블의 pay_id가 일치하는  
+											List타입의 reviewImages 필드를 또한번 each로 꺼내서 reviewImage를 받아내서 거기에 review_img를 뽑아냄 -->
+											<img th:each="reviewImage : ${review.reviewImages}" 
+													 th:src="@{/upload/{re_img}(re_img=${reviewImage.review_img})}" 
+													 class="img-thumbnail"
+													 onerror="this.style.display='none';">
+										</div>
+									</div>
+								</div>
+							</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+	//1. 날짜 아이디 가져오기
+	const dateRange = document.getElementById("dateRange");
+
+	//2. URL에서 checkIn과 checkOut 값을 가져오기
+	const urlParams = new URLSearchParams(window.location.search);
+	let checkIn = urlParams.get("checkIn") ? new Date(urlParams.get("checkIn")) : new Date();
+	let checkOut = urlParams.get("checkOut") ? new Date(urlParams.get("checkOut")) : new Date(Date.now() + 24 * 60 * 60 * 1000);
+	
+	console.log("위쪽 url에서 따온 원 checkIn->"+checkIn);
+	console.log("위쪽 url에서 따온 원 checkOut->"+checkOut);
+	
+	//5. 페이지 로드시 플랫피커 onChange가 바로시작안되서 박 표시가 안보임
+	//그래서 따로 호출해줘야됌
+	function defaultInputValue(selectedDates) {
+		if (selectedDates.length === 2) {
+			let nights = (selectedDates[1] - selectedDates[0]) / (1000 * 60 * 60 * 24);
+			let dateStr = flatpickr.formatDate(selectedDates[0], "m.d") + " ~ " + flatpickr.formatDate(selectedDates[1], "m.d");
+			dateRange.value = dateStr + " · " + nights + "박";
+		}
+	}
+
+	//3. 플랫피커 달력
+	flatpickr(dateRange, {
+		mode : "range",
+		minDate : checkIn,
+		maxDate : new Date().fp_incr(30),
+		dateFormat : "m.d",
+		defaultDate : [ checkIn, checkOut ],
+		clickOpens : false,
+		inline : true,
+		locale : "ko",
+		onChange : function(selectedDates, dateStr) {
+			console.log(selectedDates, dateStr);
+
+			//4. 날짜 범위 선택되면 input에 04.17(월) ~ 04.18(화) 1박 형식 표시
+			if (selectedDates.length === 2) {
+				let nights = (selectedDates[1] - selectedDates[0]) / (1000 * 60 * 60 * 24);
+				dateRange.value = dateStr + " · " + nights + "박";
+				
+				console.log("피커안에 0번->" +formatDate(selectedDates[0]));
+				console.log("피커안에 1번->" +formatDate(selectedDates[1]));
+				console.log("피커안에 str->" + dateStr);
+				
+			}
+			
+
+		}
+	});
+	
+	//중요!!!!!!!!달력데이터 받을 때 URL로 받아서 페이지로딩하면 괜찮은데, 
+	//ajax로 받을떈 뒤에 시간까지나와서 포맷팅해줘야함
+	//padStart(2, '0') 의 2는 최소 2자리고 2자리 안되면 앞에 0을 채운다
+	//연도만 toString안해준 이유는 padStart를 사용하려면 문자열이여야 해서 연도는 필요X
+	function formatDate(date) {
+	    const year = date.getFullYear();
+	    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+	    const day = date.getDate().toString().padStart(2, '0');
+	    return `${year}-${month}-${day}`;
+	}
+	
+	//가격 90000 -> 90,000원 포맷팅
+	function formatPrice(price){
+		return price.toLocaleString('ko-KR') + '원' ;
+	}
+	
+	
+	//버튼 누를 시 ajax내용 표출에서 페이지로드 시에도 떠야하기 때문에 함수로 빼고
+	//페이지로드 , 버튼 클릭시 두개 loadData로 줄거임
+	function loadData() {
+		
+		//URL값에서 준거 변수에 저장하기
+		const urlParams = new URLSearchParams(window.location.search);
+		let vBiz_id = urlParams.get("biz_id");
+		let vCheckIn = checkIn;
+		let vCheckOut = checkOut;
+		
+		//URL 체크인,체크아웃이 오늘날짜 이전으로 들어오면 Date형변환 후 비교
+		let vCheckInDate = new Date(vCheckIn);
+		let vCheckOutDate = new Date(vCheckOut);
+		vCheckInDate.setHours(0, 0, 0, 0);
+		vCheckOutDate.setHours(0, 0, 0, 0);
+		
+		//체크인 체크아웃이 URL에 없다면, 기본값 설정
+		if(!vCheckIn || !vCheckOut){
+			vCheckIn = new Date();
+			vCheckOut = new Date(Date.now() + 24 * 60 * 60 * 1000);
+			dateRange._flatpickr.setDate([vCheckIn, vCheckOut]); // 달력 업데이트
+		}
+		
+		let today = new Date();
+		today.setHours(0, 0, 0, 0); // 시간, 분, 초, 밀리초를 0으로 설정
+		
+		//URL 체크인,체크아웃이 오늘날짜 이전으로 들어오면 Date형변환 후 비교
+		if(vCheckInDate < today || vCheckOutDate <= today){
+			vCheckIn = new Date();
+			vCheckOut = new Date(Date.now() + 24 * 60 * 60 * 1000);
+		    dateRange._flatpickr.setDate([vCheckIn, vCheckOut]); // 달력 업데이트
+		}
+		
+		console.log(vCheckInDate < new Date());
+		console.log("vCheckInDate ->" + vCheckInDate);
+		console.log("new Date() ->" + new Date())
+		console.log(vCheckOutDate <= new Date());
+			
+		let nights = (vCheckOut - vCheckIn) / (1000 * 60 * 60 * 24);
+		
+		//체크인,체크아웃이 둘다 있다면
+	    if (checkIn && checkOut) {
+	        $.ajax({
+	            url: "/accomDetail1",
+	            type: "GET",
+	            dataType:'json',
+	            data: {biz_id : vBiz_id, 
+	            		  checkIn : formatDate(vCheckIn), 
+	            		  checkOut : formatDate(vCheckOut)},
+	            success: data => {
+	            	let html = "";
+	            	
+	            	data.forEach( item => {
+	            		html += '<div class="roomList">'
+	            		html += '<div class="roomListImg"><img src=/upload/' + item.r_img + ' alt = roomImage></div>';
+	            		html += '<div class="roomListName"><h2>' + item.r_name + '</h2></div>';
+	            		html += '<div class="roomListPrice"><p><strong>가격  </strong><br>' + formatPrice(item.r_price) + '/ 1박</p></div>';
+						html += '<button class="roomListReserveBtn" data-is-reserved="'+item.is_reserved+'" onclick="location.href=\'/payment?biz_id='+item.biz_id+'&r_id='+item.r_id+'&checkIn='+formatDate(vCheckIn)+'&checkOut='+formatDate(vCheckOut)+'\'">';
+						
+						if(item.is_reserved == 1){
+							html += '예약불가' ;
+						} else{
+							html += '예약 ' + formatPrice(item.totalRoomPrice) + '/ '+nights+'박';
+						}
+						html += '</button>';
+						html += '</div>';
+	            	});
+	            	$('#roomReservedList').html(html);
+	            	updateReserveButtons();
+	            }
+	        });
+	    } else {
+	    }
+	  
+	}
+	//상세페이지 넘어올 때 페이지 로딩 시 ajax발동
+	$(document).ready(function() {
+	    loadData();
+	    
+	}); 
+	
+	//날짜선택후 선택완료 버튼 눌렀을 시 ajax발동
+	//눌렀을때 달력에 selectedDates 값들을 다시 받아서 loadData() 다시 호출해야 갱신된다.
+	$('#submitDateBtn').click(function() {
+		const selectedDates = dateRange._flatpickr.selectedDates;
+		
+		if(selectedDates.length === 2){
+			checkIn = selectedDates[0];
+			checkOut = selectedDates[1];
+		}
+		
+		loadData();
+	});
+
+	//6.페이지로드시 onChange 발동안되서 박표시 안되니 내가 만들어서 강제로 호출
+	defaultInputValue([ checkIn, checkOut ]);
+	
+	
+	//8. 밑에 메뉴 토글버튼 3개
+	//객실예약, 숙소정보, 리뷰를 .accordion-button으로 묶어서 SelectorAll로 가져옴
+	const buttons = document.querySelectorAll('.accordion-button');
+	//각각에 대한 내용 div .content SelectorAll로 가져옴
+	const contents = document.querySelectorAll('.content');
+	
+	//버튼들 forEach로 돌리고
+	buttons.forEach((button, index) => {
+		//하나의 버튼 클릭했을때 내부의 함수 실행
+	    button.addEventListener('click', () => {
+	    	contents.forEach((content, contentIndex) => {
+	    		if (contentIndex === index){
+	    			content.style.display = "block";
+	    		} else{
+	    			content.style.display = "none";
+	    		}
+	    	});
+	        
+	    });
+	});
+	
+	//data-is-reserved에 저장되있는 item.is_reserved 값으로 버튼 변경
+	function updateReserveButtons(){
+		$('.roomListReserveBtn').each(function(){
+			var is_reserved = $(this).data('is-reserved');
+			if (is_reserved == 1){
+				$(this).css('background-color', 'darkgray');
+				$(this).prop('disabled', true); //porp은 jquery요서의 속성값을 가져옴, disabled 속성을 true로 하면 버튼 비활성화
+				
+			}else {
+		        $(this).prop('disabled', false);
+	        }
+		});
+	}
+	
+	const locationDiv = document.getElementById("location");
+	const latitude = parseFloat(locationDiv.dataset.latitude);
+	const longitude = parseFloat(locationDiv.dataset.longitude);
+	
+	// 구글지도
+	function initMap() {
+	  // The location of Uluru
+	  const center = { lat: latitude, lng: longitude };
+	  // The map, centered at Uluru
+	  const map = new google.maps.Map(document.getElementById("map"), {
+	    zoom: 15,
+	    center: center,
+	  });
+	  // The marker, positioned at Uluru
+	  const marker = new google.maps.Marker({
+	    position: center,
+	    map: map,
+	  });
+	}
+	
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwZesHSZu_iIRYqHIJyYUGsOJb8dHIU1Y&callback=initMap&v=weekly" defer></script>
+</th:block>
+</html>

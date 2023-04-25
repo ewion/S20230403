@@ -1,0 +1,197 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout/default_layout">
+
+<th:block layout:fragment="content">
+
+	<style>
+.bd-placeholder-img {
+	font-size: 1.125rem;
+	text-anchor: middle;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+@media ( min-width : 768px) {
+	.bd-placeholder-img-lg {
+		font-size: 3.5rem;
+	}
+}
+</style>
+	<script type="text/javascript"
+		src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+	<!-- iamport.payment.js -->
+	<script type="text/javascript"
+		src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+<script th:inline="javascript">
+const IMP = window.IMP;
+IMP.init('imp58168664');
+const money =  $("#money"). val();
+function requestPay() {
+   // const priceAmount = $('#totalPrice').val();
+  ////  const buyerMemberEmail = $('#memberEmail').val();
+    const buyerMemberName = $('#memberName').val();
+    const rName = $('#rName').val();
+
+    // IMP.request_pay(param, callback) 결제창 호출
+    IMP.request_pay({ // param
+        pg: buyerMemberName,
+        pay_method: "card",
+        merchant_uid: 'cart_' + new Date().getTime(),
+        name: /*[[${pmt.biz_name}+${pmt.r_name}]]*/,
+        amount: /*[[${pmt.r_price}*${daysBetween}]]*/,
+        buyer_email: 'yunstar2555@gmail.com',
+        buyer_name: '윤상',
+
+    })
+};
+</script>
+
+	<body class="bg-light">
+
+		<div class="container">
+			<main>
+				<div class="row g-5">
+					<div class="col-md-5 col-lg-4 order-md-last">
+						<h4 class="d-flex justify-content-between align-items-center mb-3"
+							th:each="pmt : ${pmt}">
+							<span class="text-primary">숙박 예약 정보</span>
+						</h4>
+						<ul class="list-group mb-3">
+							<li class="list-group-item d-flex justify-content-between lh-sm">
+								<div>
+									<h6 class="my-0">
+										숙소 이름 <br> <strong style="font-size: 20px;"
+											th:text="${pmt.biz_name}"></strong>
+									</h6>
+									<small class="text-muted"><strong></strong></small>
+								</div> <span class="text-muted">기본 가격 :<a
+									th:text="${pmt.r_price}"></a> \
+							</span>
+							</li>
+							<li class="list-group-item d-flex justify-content-between lh-sm">
+								<div>
+									<h6 class="my-0">
+										<strong>객실 이름/기간</strong>
+									</h6>
+									<small class="text-muted" th:text="${pmt.r_name}"></small> / <small
+										th:text="${daysBetween}"></small><a>박</a>
+
+								</div> <span class="text-muted"
+								th:text="${pmt.r_price}*${daysBetween}+' \\'"></span>
+							</li>
+							<li class="list-group-item d-flex justify-content-between lh-sm">
+								<div>
+									<h6 class="my-0">체크인</h6>
+									<small class="text-muted" th:text="${formattedDate1}">
+									</small><a>15:00 </a>
+								</div> <span class="text-muted"></span>
+							</li>
+							<li class="list-group-item d-flex justify-content-between lh-sm">
+								<div>
+									<h6 class="my-0">체크아웃</h6>
+									<small class="text-muted" th:text="${formattedDate2}">
+									</small><a>12:00 </a>
+								</div> <span class="text-muted" th:text="${daysBetween}+'박'"></span>
+							</li>
+							<li
+								class="list-group-item d-flex justify-content-between bg-light">
+								<div class="text-success">
+									<h6 class="my-0">적용된 할인</h6>
+									<small></small>
+								</div> <span class="text-success">0\</span>
+							</li>
+							<li name="money" class="list-group-item d-flex justify-content-between">
+								<span>합계 </span> <strong  
+								th:text="${pmt.r_price}*${daysBetween}+' \\'"></strong>
+							</li>
+						</ul>
+					</div>
+					<div class="col-md-7 col-lg-8">
+						<h4 class="mb-3"></h4>
+						<form class="needs-validation" novalidate>
+							<div class="row g-3">
+								<div class="col-sm-6">
+									<label for="lastName" class="form-label">이름</label> <input
+										type="text" class="form-control" id="lastName" placeholder=""
+										value="" required>
+									<div class="invalid-feedback">이름이 들어가는 곳의 정보</div>
+								</div>
+								<div class="col-12">
+									<label for="address" class="form-label">휴대전화</label> <input
+										type="text" class="form-control" id="address"
+										placeholder="010-0000-0000" required>
+									<div class="invalid-feedback">Please enter your shipping
+										address.</div>
+								</div>
+							</div>
+							<hr class="my-4">
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input"
+									id="same-address"> <label class="form-check-label"
+									for="same-address">숙소 이용에 대한 동의</label>
+							</div>
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input"
+									id="same-address"> <label class="form-check-label"
+									for="same-address">개인정보 동의</label>
+							</div>
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input"
+									id="same-address"> <label class="form-check-label"
+									for="same-address">만 14세 이상 확인</label>
+							</div>
+							<hr>
+							<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="save-info"
+									onclick="checkAll()"> <label class="form-check-label"
+									for="save-info"><strong>전체 동의</strong></label>
+							</div>
+
+							<script>
+								function checkAll() {
+									var checkboxes = document
+											.querySelectorAll('.form-check-input:not(#save-info)');
+									var saveInfoCheckbox = document
+											.getElementById('save-info');
+
+									for (var i = 0; i < checkboxes.length; i++) {
+										checkboxes[i].checked = saveInfoCheckbox.checked;
+									}
+								}
+							</script>
+
+
+							<hr class="my-4">
+
+							<h4 class="mb-3">결제 방식</h4>
+
+							<div class="my-3">
+								<div class="form-check">
+									<input id="credit" name="memberName" type="radio"
+										class="form-checkinput" checked required> <label
+										class="form-checklabel" for="credit">카드 결제</label>
+								</div>
+								<div class="form-check">
+									<input id="debit" name="memberName" type="radio"
+										class="form-checkinput" required> <label
+										class="form-checklabel" for="debit">Toss 결제</label>
+								</div>
+								<div class="form-check">
+									<input id="paypal" name="memberName" type="radio"
+										class="form-checkinput" required> <label
+										class="form-checklabel" for="kakaopay.TC0ONETIME">카카오 페이</label>
+								</div>
+							</div>
+							<hr class="my-4">
+							<button class="w-100 btn btn-primary btn-lg"
+								onclick="requestPay()" type="button">결제 화면으로 이동</button>
+						</form>
+					</div>
+				</div>
+			</main>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.S20230403.AccomPayment">
+	<select id="ygetapt" parameterType="AccomPayment" resultType="AccomPayment">
+		SELECT p.*, a.biz_name
+		FROM payment p
+		JOIN accom a ON p.biz_id = a.biz_id
+		WHERE p.biz_id = #{biz_id} AND p.r_id = #{r_id}
+	</select>
+</mapper>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout/default_layout">
+
+<th:block layout:fragment="content">
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			// 검색 폼(form) 제출 시
+			$('form').on('submit', function(e) {
+				e.preventDefault(); // 폼 제출 기본 동작 방지
+
+				// 선택된 검색 조건 값 가져오기
+				var searchValue = $('#search').val();
+
+				// 검색어(keyword) 값 가져오기
+				var keywordValue = $('#keyword').val();
+
+				// 검색 조건(search)과 검색어(keyword) 값이 유효한 경우에만 폼 제출
+				if (searchValue && keywordValue) {
+					this.submit(); // 폼 제출
+				} else {
+					// 검색 조건과 검색어가 입력되지 않은 경우에 대한 처리
+					alert('검색 조건과 검색어를 모두 입력해주세요.');
+				}
+			});
+		});
+		
+		document.addEventListener('DOMContentLoaded', function() {
+		    // 서버로부터 전달받은 search 값
+		    var searchValue = "${search}";
+
+		    // select 요소 선택
+		    var searchSelect = document.getElementById('search');
+
+		    // search 값에 따라 선택된 옵션 설정
+		    if (searchValue === 's_user_id') {
+		        searchSelect.value = 's_user_id';
+		    } else if (searchValue === 's_name') {
+		        searchSelect.value = 's_name';
+		    } else if (searchValue === 's_nickname') {
+		        searchSelect.value = 's_nickname';
+		    } else if (searchValue === 's_email') {
+		        searchSelect.value = 's_email';
+		    } else if (searchValue === 's_phone') {
+		        searchSelect.value = 's_phone';
+		    }
+		});
+		
+		$.ajax({
+		    url: 'http://example.com/api', // 요청할 URL
+		    method: 'POST', // 요청 메소드 (GET, POST, PUT, DELETE 등)
+		    contentType: '', // 요청 데이터 타입 'application/json'
+		    dataType: 'json', // 응답 데이터 타입 (json, xml, text 등)
+		    data: {
+		        param1: 'value1', // 요청에 포함할 데이터 (속성값)
+		        param2: 'value2',
+		        // 추가적인 속성값들을 여기에 추가
+		    },
+		    success: function(response) {
+		        // 성공적으로 응답을 받았을 때 실행되는 콜백 함수
+		        console.log('응답 데이터:', response);
+		    },
+		    error: function(xhr, status, error) {
+		        // 요청이 실패했을 때 실행되는 콜백 함수
+		        console.log('에러:', error);
+		    }
+		});
+	</script>
+	<script type="text/javascript">
+		function clickPage(pCurrentPage) {
+			var vSearch = $("#search").val();
+			var vKeyword = $("#keyword").val();
+			var sendData = 'currentPage=' + pCurrentPage;
+			var sendData = sendData + '&search=' + vSearch;
+			var sendData = sendData + '&keyword=' + vKeyword;
+
+			alert('sendData->' + sendData);
+			location.href = "userSeacrh1?" + sendData;
+			$(function() {
+				$('#deleteBtn').click(function() {
+					if (confirm('정말 삭제하시겠습니까?')) {
+						return false;
+					}
+				});
+			});
+		}
+	</script>
+	
+
+	<div class="row">
+		<h3 style="padding-left: 180px; padding-bottom: 5px;">관리자 페이지</h3>
+		<!-- 각 화면의 네비게이션 탭 시작 부분 -->
+		<div class="col-4"
+			style="text-align: center; width: 180px; height: auto;">
+			<div class="list-group" id="list-tab" role="tablist">
+				<!-- 일반 회원 관리탭 -->
+				<a class="list-group-item list-group-item-action active"
+					id="list-user-list" data-bs-toggle="list" href="#list-user"
+					role="tab" aria-controls="list-user">일반회원 </a>
+
+				<!-- 사업자 회원 관리탭 -->
+				<a class="list-group-item list-group-item-action" id="list-biz-list"
+					data-bs-toggle="list" href="#list-biz" role="tab"
+					aria-controls="list-biz">사업자 회원</a>
+
+				<!-- QnA 관리탭 -->
+				<a class="list-group-item list-group-item-action" id="list-QnA-list"
+					data-bs-toggle="list" href="#list-QnA" role="tab"
+					aria-controls="list-QnA">게시판 관리 </a>
+
+				<!-- Review 관리탭 -->
+				<a class="list-group-item list-group-item-action"
+					id="list-review-list" data-bs-toggle="list" href="#list-review"
+					role="tab" aria-controls="list-review">리뷰 관리 </a>
+
+			</div>
+		</div>
+
+		<!-- 각 탭을 클릭하면 나오는 표 시작 부분 -->
+		<div class="col-10">
+			<div class="tab-content" id="nav-tabContent" style="width: 90%;">
+
+				<!-- User 테이블 헤더와 내용 -->
+				<div class="tab-pane fade show active" id="list-user"
+					role="tabpanel" aria-labelledby="list-user-list">
+					<table class="table">
+						<!-- 테이블 헤더 -->
+						<thead>
+							<tr>
+								<th scope="col">번호</th>
+								<th scope="col">아이디</th>
+								<th scope="col">이름</th>
+								<th scope="col">닉네임</th>
+								<th scope="col">전화번호</th>
+								<th scope="col">성별</th>
+								<th scope="col">회원상태</th>
+								<th scope="col">권한레벨</th>
+								<th scope="col">관리</th>
+							</tr>
+						</thead>
+						<!-- 일반 회원 정보 검색 -->
+						<form class="d-flex" action="userSeacrh1" method="get">
+							<div class="d-flex align-items-center">
+								<select name="search" id="search"
+									style="width: auto; border-radius: 20px; text-align: center;"
+									class="form-control me-2">
+									<option>검색조건▼</option>
+									<option value="s_user_id" >아이디</option>
+									<option value="s_name" >이름</option>
+									<option value="s_nickname" >닉네임</option>
+									<option value="s_email" >이메일</option>
+									<option value="s_phone" >전화번호</option>
+								</select> <input
+									style="width: auto; border-radius: 20px; text-align: left;"
+									class="form-control me-2" type="text" placeholder="검색어 입력란"
+									name="keyword" id="keyword" th:value="*{keyword}"
+									aria-label="Search">
+								<button
+									style="margin-left: 25px; margin-right: 35px; font-weight: bolder; font-size: 20px; border-radius: 215px; width: 100px; border-color: rgb(0, 183, 247); border: 1; color: rgb(0, 183, 247); text-align: center;"
+									class="btn" type="submit">검색</button>
+							</div>
+						</form>
+
+						<tbody>
+							<!-- userlist를 이용해 사용자 정보 출력 -->
+							<tr th:each="user:${userlist}">
+								<th scope="row" th:text="${user.rn}"></th>
+								<td th:text="${user.user_id}"></td>
+								<td th:text="${user.name}"></td>
+								<td th:text="${user.nickname}"></td>
+								<td th:text="${user.phone}"></td>
+								<td><span th:if="${user.gender == 'Male'}">남자</span> <span
+									th:if="${user.gender == 'Female'}">여자</span></td>
+								<td><span th:if="${user.user_status == 'activated'}">사용중</span>
+									<span th:if="${user.user_status == 'deactivated'}">탈퇴</span></td>
+								<td><span th:if="${user.auth_level == 'USER'}">일반회원</span>
+									<span th:if="${user.auth_level == 'SELLER'}">사업자</span> <span
+									th:if="${user.auth_level == 'ADMIN'}">관리자</span></td>
+								<td>
+									<form action="delUser" method="post">
+										<input type="hidden" name="user_id" th:value="${user.user_id}">
+										<button type="submit"
+											th:text="${user.user_status == 'activated' ? '비활성화' : '활성화'}"
+											id="deleteBtn" style="width: 80px;"></button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- 페이징 작업 -->
+					'<div><nav aria-label="Page navigation example"><ul class="pagination justify-content-center"><li class="page-item disabled"
+									th:if="${page.startPage - page.pageBlock >= 1}"><a
+									class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage - page.pageBlock}">
+										<span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
+								</a></li>
+								<li class="page-item"
+									th:each="i: ${#numbers.sequence(page.startPage, page.endPage)}">
+									<button class="page-link" th:onclick="clickPage([[${i}]])"
+										th:text="${i}"
+										th:class="${i == page.currentPage ? 'active' : ''}">
+									</button>
+								</li>
+								<li class="page-item"
+									th:if="${page.endPage + page.pageBlock <= page.totalPage}">
+									<a class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage + page.pageBlock}">
+										<span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span>
+								</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+
+				<!-- Accom 테이블 헤더와 내용 -->
+				<div class="tab-pane fade" id="list-biz" role="tabpanel"
+					aria-labelledby="list-biz-list">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">번호</th>
+								<th scope="col">사업자 등록증 id</th>
+								<th scope="col">회원 id</th>
+								<th scope="col">사용</th>
+								<th scope="col">업체명</th>
+								<th scope="col">주소</th>
+								<th scope="col">전화번호</th>
+								<th scope="col">관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- accomlist를 이용해 사업자 회원 정보 출력 -->
+							<tr th:each="biz :${accomlist}">
+								<th scope="row" th:text="${biz.rn}"></th>
+								<td th:text="${biz.biz_id}"></td>
+								<td th:text="${biz.user_id}"></td>
+								<td><span th:if="${biz.accom_avail == '210'}">가능</span> <span
+									th:if="${biz.accom_avail == '230'}">불가능</span></td>
+								<td th:text="${biz.biz_name}"></td>
+								<td th:text="${biz.addr}"></td>
+								<td th:text="${biz.tel}"></td>
+								<td>
+									<form action="delAccom" method="post">
+										<input type="hidden" name="biz_id" th:value="${biz.biz_id}">
+										<button type="submit"
+											th:text="${biz.accom_avail == '210' ? '비활성화' : '활성화'}"
+											id="deleteBtn" style="width: 100px;"></button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- 페이징 작업 -->
+					<div>
+						<nav aria-label="Page navigation example">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled"
+									th:if="${page.startPage - page.pageBlock >= 1}"><a
+									class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage - page.pageBlock}">
+										<span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
+								</a></li>
+								<li class="page-item"
+									th:each="i: ${#numbers.sequence(page.startPage, page.endPage)}">
+									<button class="page-link" th:onclick="clickPage([[${i}]])"
+										th:text="${i}"
+										th:class="${i == page.currentPage ? 'active' : ''}">
+									</button>
+								</li>
+								<li class="page-item"
+									th:if="${page.endPage + page.pageBlock <= page.totalPage}">
+									<a class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage + page.pageBlock}">
+										<span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span>
+								</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+
+				<!-- QnA 테이블 헤더와 내용 -->
+				<div class="tab-pane fade" id="list-QnA" role="tabpanel"
+					aria-labelledby="list-QnA-list">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">번호</th>
+								<th scope="col">타입</th>
+								<th scope="col">회원 id</th>
+								<th scope="col">제목</th>
+								<th scope="col">내용</th>
+								<th scope="col">답변</th>
+								<th scope="col">관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- listQnA를 이용해 1대1문의 / 불만접수 정보 출력 -->
+							<tr th:each="qna : ${qnalist}">
+								<td th:text="${qna.qna_id}"></td>
+								<td><span th:if="${qna.qna_type == '430'}">1대1 문의</span> <span
+									th:if="${qna.qna_type == '440'}">불만접수</span></td>
+								<td th:text="${qna.user_id}"></td>
+								<td th:text="${qna.qna_title}"></td>
+								<td th:text="${qna.qna_content}"></td>
+								<td th:text="${qna.reply}"></td>
+								<td>
+									<form action="/delQnA" method="post">
+										<input type="hidden" name="qna_id" th:value="${qna.qna_id}">
+										<button type="submit" id="deleteBtn">삭제</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- 페이징 작업 -->
+					<div>
+						<nav aria-label="Page navigation example">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled"
+									th:if="${page.startPage - page.pageBlock >= 1}"><a
+									class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage - page.pageBlock}">
+										<span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
+								</a></li>
+								<li class="page-item"
+									th:each="i: ${#numbers.sequence(page.startPage, page.endPage)}">
+									<button class="page-link" th:onclick="clickPage([[${i}]])"
+										th:text="${i}"
+										th:class="${i == page.currentPage ? 'active' : ''}">
+									</button>
+								</li>
+								<li class="page-item"
+									th:if="${page.endPage + page.pageBlock <= page.totalPage}">
+									<a class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage + page.pageBlock}">
+										<span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span>
+								</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+
+				<!-- review 테이블 헤더와 내용 -->
+				<div class="tab-pane fade" id="list-review" role="tabpanel"
+					aria-labelledby="list-review-list">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">번호</th>
+								<th scope="col">별점</th>
+								<th scope="col">작성 날짜</th>
+								<th scope="col">내용</th>
+								<th scope="col">삭제요청</th>
+								<th scope="col">관리</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- listReview를 이용해 리뷰 정보 출력 -->
+							<tr th:each="r : ${reviewlist}">
+								<td th:text="${r.pay_id}"></td>
+								<td th:text="${r.rating}"></td>
+								<td th:text="${r.review_date}"></td>
+								<td th:text="${r.review_content}"></td>
+								<td th:text="${r.del_request}"></td>
+								<td>
+									<form action="/delReview" method="post">
+										<input type="hidden" name="pay_id" th:value="${r.pay_id}">
+										<button type="submit" id="deleteBtn">삭제</button>
+									</form>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					<!-- 페이징 작업 -->
+					<div>
+						<nav aria-label="Page navigation example">
+							<ul class="pagination justify-content-center">
+								<li class="page-item disabled"
+									th:if="${page.startPage - page.pageBlock >= 1}"><a
+									class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage - page.pageBlock}">
+										<span aria-hidden="true">&laquo;</span> <span class="sr-only">Previous</span>
+								</a></li>
+								<li class="page-item"
+									th:each="i: ${#numbers.sequence(page.startPage, page.endPage)}">
+									<button class="page-link" th:onclick="clickPage([[${i}]])"
+										th:text="${i}"
+										th:class="${i == page.currentPage ? 'active' : ''}">
+									</button>
+								</li>
+								<li class="page-item"
+									th:if="${page.endPage + page.pageBlock <= page.totalPage}">
+									<a class="page-link"
+									th:href="'/adminPage?currentPage=' + ${page.startPage + page.pageBlock}">
+										<span aria-hidden="true">&raquo;</span> <span class="sr-only">Next</span>
+								</a>
+								</li>
+							</ul>
+						</nav>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<script>
+	
+	$.ajax({
+	    url: '/admin/users', // 요청할 URL
+	    method: 'GET', // 요청 메소드 (GET, POST, PUT, DELETE 등)
+	    success: function(userList) {
+	        // 성공적으로 응답을 받았을 때 실행되는 콜백 함수
+	        console.log('응답 데이터:', userList);
+	        for (let i = 0; i < userList.length; i++) {
+	            $('#users').append('<tr><td>' + userList[i].user_id + '(' + userList[i].name + ')</td></tr>');
+	        }
+
+	    },
+	    error: function(xhr, status, error) {
+	        // 요청이 실패했을 때 실행되는 콜백 함수
+	        console.log('에러:', error);
+	    }
+	});
+	
+	$('#search-btn').click(function(){
+
+		$.ajax({
+		    url: '/admin/users', // 요청할 URL
+		    method: 'GET', // 요청 메소드 (GET, POST, PUT, DELETE 등)
+		    success: function(userList) {
+		        // 성공적으로 응답을 받았을 때 실행되는 콜백 함수
+		        console.log('응답 데이터:', userList);
+	        	$('#users').empty();
+		        for (let i = 0; i < userList.length; i++) {
+		            $('#users').append('<tr><td>' + userList[i].name + '(' + userList[i].user_id + ')</td></tr>');
+		        }
+
+		    },
+		    error: function(xhr, status, error) {
+		        // 요청이 실패했을 때 실행되는 콜백 함수
+		        console.log('에러:', error);
+		    }
+		});
+	});
+
+	</script>
+
+
+
+
+
+
+
+
+
+
+</th:block>
+</html>

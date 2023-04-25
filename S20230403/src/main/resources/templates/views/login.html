@@ -1,0 +1,73 @@
+<!--로그인 페이지-->
+<!-- login.html-->
+<!DOCTYPE html>
+<!-- Latest compiled and minified CSS -->
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="layout/default_layout">
+<th:block layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        $(document).ready(function(){
+            $('form').submit(function(){
+                var userId = $('#user_id').val();
+                var password = $('input[name="password"]').val();
+                if(userId === '' || password === ''){
+                    alert('아이디와 비밀번호를 모두 입력해주세요.');
+                    return false;
+                }
+            });
+        });
+        function checkDuplication() {
+            var userId = $('#user_id').val();
+            $.ajax({
+                type: 'POST',
+                url: '/checkDuplication',
+                data: {
+                    user_id: userId
+                },
+                success: function (response) {
+                    if (response === 0) {
+                        $('#duplicationCheckResult').text('회원가입을 진행해주세요.');
+                    } else {
+                        $('#duplicationCheckResult').text('로그인이 가능합니다.');
+                    }
+                },
+                error: function (request, status, error) {
+                    console.log('AJAX Error: ' + error);
+                }
+            });
+        }
+    </script>
+    <title></title>
+</head>
+<body>
+<div class="container">
+    <div th:if="${param.error}" class="alert alert-danger">로그인에 실패했습니다. 다시 시도해주세요.</div>
+    <h1>로그인</h1>
+    <form th:action="@{/login_proc}" method="post">
+        <div class="form-group">
+            <label for="user_id" th:text="아이디"></label>
+            <input type="text" id="user_id" name="user_id" class="form-control" placeholder="아이디 입력해주세요"
+                   onkeyup="checkDuplication()">
+            <span id="duplicationCheckResult"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="password">비밀번호</label>
+            <input type="password" class="form-control" name="password" placeholder="비밀번호 입력해주세요">
+        </div>
+        <button type="submit" class="btn btn-primary">로그인</button>
+        <button type="button" class="btn btn-primary" onClick="location.href='sign'">회원 가입</button>
+        <hr>
+        <p>
+            <button type="button" class="btn btn-primary" onclick="location.href='/oauth2/authorization/google'">
+                구글 로그인
+            </button>
+        </p>
+    </form>
+    <br/>
+</div>
+</body>
+</th:block>
+</html>
