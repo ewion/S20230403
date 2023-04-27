@@ -175,5 +175,5 @@ public class BizUserDao01 implements SukbakDao01{
 		
 	}
 
-	
+	//확인용
 }

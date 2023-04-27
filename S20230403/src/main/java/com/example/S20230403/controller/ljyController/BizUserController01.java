@@ -303,4 +303,13 @@ public class BizUserController01 {
 		ss01.roomInsert(room);
 		return "redirect:/biz/bizMain";
 	}
+	
+	@PostMapping(value = "/biz/example")
+	public String example(Model model) {
+		String example = "example";
+		example = "example2";
+		example = "example3";
+		model.addAttribute("example", example);
+		return "example!!!";
+	}
 }
