@@ -312,4 +312,22 @@ public class BizUserController01 {
 		model.addAttribute("example", example);
 		return "example!!!";
 	}
+	
+	@PostMapping(value = "/biz/example2")
+	public String example2(Model model) {
+		String example = "example";
+		example = "example2";
+		example = "example3";
+		model.addAttribute("example", example);
+		return "example!!!";
+	}
+	
+	@PostMapping(value = "/biz/example3")
+	public String example3(Model model) {
+		String example = "example";
+		example = "example2";
+		example = "example3";
+		model.addAttribute("example", example);
+		return "example!!!";
+	}
 }
